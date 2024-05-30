@@ -1,9 +1,10 @@
 package Server; //always launch the server in first //"sudo java" because port(80) is for admin
 
-//faut faire avec les champs ou pas pour le server on affiche juste un site ?
-
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 class Server
 { 
@@ -49,6 +50,12 @@ class Server
       System.out.println("Client connected!");
         
       MsgClientRequest_ = inFromClient_.readLine();
+      
+      if (MsgClientRequest_ == null) 
+      {
+        return;  
+      }
+
       System.out.println("Request from Client: " + MsgClientRequest_);
 
       String[] PartsOfClientRequest = MsgClientRequest_.split(" ");
@@ -56,7 +63,7 @@ class Server
       String Uri = PartsOfClientRequest[1]; //ex : index.html
       System.out.println("Method from Client: " + Method + "\nURI from Client: " + Uri);
         
-      while((MsgClientRequestHeader_ = inFromClient_.readLine()) != null && !MsgClientRequestHeader_.isEmpty()) //if null, end for the msg 
+      while((MsgClientRequestHeader_ = inFromClient_.readLine()) != null && !MsgClientRequestHeader_.isEmpty()) //if null, end for the msg
       {
         System.out.println("Header from Client: " + MsgClientRequestHeader_);
       }
@@ -68,6 +75,12 @@ class Server
           break;
         case "POST":
           POSTRequest(Uri);
+          break;
+        case "PUT":
+          PUTRequest(Uri);
+          break;
+        case "DELETE":
+          DELETERequest(Uri);
           break;
       }
     }
@@ -91,16 +104,31 @@ class Server
     }
   }
 
+  private Map<String, String> parseFormData(String data) 
+  {
+    Map<String, String> params = new HashMap<>();
+    String[] pairs = data.split("&");
+    for (String pair : pairs) 
+    {
+      String[] keyValue = pair.split("=");
+      if (keyValue.length > 1) 
+      {
+          params.put(keyValue[0], URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8));
+      }
+    }
+    return params;
+  }
+
   public void GETRequest(String _Uri) throws IOException 
   {
-    File Index = new File("Site" + _Uri); // Remove leading '/' from URI
+    File HTML_FILE = new File("Site" + _Uri); // Remove leading '/' from URI
 
-    if(Index.exists() && !Index.isDirectory()) //if index exist
+    if(HTML_FILE.exists() && !HTML_FILE.isDirectory()) //if index exist
     {
-      FileInputStream IndexInput = new FileInputStream(Index);
-      byte[] Data = new byte[(int) Index.length()]; //create a byte tab 
-      IndexInput.read(Data); 
-      IndexInput.close();
+      FileInputStream HTMLInput = new FileInputStream(HTML_FILE);
+      byte[] Data = new byte[(int) HTML_FILE.length()]; //create a byte tab 
+      HTMLInput.read(Data); 
+      HTMLInput.close();
 
       MsgServer_ = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + Data.length + "\r\n\r\n";
       outToClient_.writeBytes(MsgServer_);
@@ -109,7 +137,7 @@ class Server
     } 
     else //if file don't exist
     {
-      MsgServer_ = "HTTP/1.1 404 Not Found\r\n\r\nFile Not Found";
+      MsgServer_ = "HTTP/1.1 404 Not Found\r\n\r\n" + _Uri + " Not Found";
       outToClient_.writeBytes(MsgServer_);
       outToClient_.flush();
     }
@@ -125,38 +153,118 @@ class Server
     }
 
     String data = URLDecoder.decode(payload.toString(), "UTF-8");
+    Map<String, String> params = parseFormData(data);
 
-    File Index = new File("Site" + _Uri); //path file saveclient
+    File HTML_FILE = new File("Site" + _Uri);
 
-    if(Index.exists() && !Index.isDirectory()) //if index exists
+    try(FileWriter HTMLWrite = new FileWriter(HTML_FILE, false)) 
     {
-      try (FileWriter IndexWrite = new FileWriter(Index, false))
-      {
-        IndexWrite.write("<html><body>");
-        IndexWrite.write("Données enregistrées : " + data); //for save data
-        IndexWrite.write("</body></html>");
-      }
-
-      MsgServer_ = "HTTP/1.1 200 OK\r\n\r\nFile Updated";
-      MsgServer_ = "HTTP/1.1 303 See Other\r\nLocation: " + _Uri + "\r\n\r\n";
+      HTMLWrite.write("<html><body>");
+      HTMLWrite.write("Nom: " + params.get("lastname") + "<br>");
+      HTMLWrite.write("Prenom: " + params.get("firstname") + "<br>");
+      HTMLWrite.write("Email: " + params.get("email") + "<br>");
+      HTMLWrite.write("</body></html>");
+      HTMLWrite.flush();
     }
-    else //If file doesn't exist
+
+    if(HTML_FILE.exists() && !HTML_FILE.isDirectory()) 
     {
-      MsgServer_ = "HTTP/1.1 401 Unauthorized\r\n\r\nFile Not Found";
+      MsgServer_ = "HTTP/1.1 200 OK\r\n\r\n" + _Uri + " Create";
+      outToClient_.writeBytes(MsgServer_);
+      FileInputStream fis = new FileInputStream(HTML_FILE);
+      byte[] buffer = new byte[4096];
+      int bytesRead;
+      while ((bytesRead = fis.read(buffer)) != -1) 
+      {
+        outToClient_.write(buffer, 0, bytesRead);
+      }
+      fis.close();
+    } 
+    else 
+    {
+      MsgServer_ = "HTTP/1.1 401 Unauthorized\r\n\r\n" + _Uri + " Not Found";
     }
 
     outToClient_.writeBytes(MsgServer_);
     outToClient_.flush();
   }
 
-    public static void main(String argv[]) throws Exception 
-    { 
-      System.out.println("server is activate!");
-      Server server = new Server();
+  public void PUTRequest(String _Uri) throws IOException 
+  {
+    File HTML_FILE = new File("Site" + _Uri);
 
-      while(true)
+    StringBuilder payload = new StringBuilder();
+
+    while(inFromClient_.ready()) 
+    {
+      payload.append((char) inFromClient_.read());
+    }
+
+    String data = URLDecoder.decode(payload.toString(), "UTF-8");
+    Map<String, String> params = parseFormData(data);
+
+    try (FileWriter HTMLWriter = new FileWriter(HTML_FILE, false)) 
+    {
+      HTMLWriter.write("<html><body>");
+      HTMLWriter.write("Nom: " + params.get("lastname") + "<br>");
+      HTMLWriter.write("Prenom: " + params.get("firstname") + "<br>");
+      HTMLWriter.write("Email: " + params.get("email") + "<br>");
+      HTMLWriter.write("</body></html>");
+      HTMLWriter.flush();
+    }
+
+    if(HTML_FILE.exists()) 
+    {
+      MsgServer_ = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + HTML_FILE.length() + "\r\n\r\n" + _Uri + " Updated" + "\r\n\r\n";
+      outToClient_.writeBytes(MsgServer_);
+      FileInputStream fis = new FileInputStream(HTML_FILE);
+      byte[] buffer = new byte[4096];
+      int bytesRead;
+
+      while((bytesRead = fis.read(buffer)) != -1) 
       {
-        server.Declaration_Param_Client(); 
+        outToClient_.write(buffer, 0, bytesRead);
       }
+
+      fis.close();
     } 
+    else 
+    {
+      MsgServer_ = "HTTP/1.1 404 Not Found\r\n\r\nFile could not be created";
+      outToClient_.writeBytes(MsgServer_);
+    }
+
+    outToClient_.flush();
   }
+
+
+  public void DELETERequest(String _Uri) throws IOException
+  {
+    File HTML_FILE = new File("Site" + _Uri);
+
+    if (HTML_FILE.exists() && !HTML_FILE.isDirectory()) 
+    {
+      HTML_FILE.delete();
+      String MsgServer_ = "HTTP/1.1 200 OK\r\n\r\n" + _Uri + " Deleted";
+      outToClient_.writeBytes(MsgServer_);
+      outToClient_.flush();
+    } 
+    else 
+    {
+      String MsgServer_ = "HTTP/1.1 404 Not Found\r\n\r" + _Uri + " Not Found";
+      outToClient_.writeBytes(MsgServer_);
+      outToClient_.flush();
+    }
+  }
+
+  public static void main(String argv[]) throws Exception 
+  { 
+    System.out.println("server is activate!");
+    Server server = new Server();
+
+    while(true)
+    {
+      server.Declaration_Param_Client(); 
+    }
+  } 
+}

@@ -2,20 +2,32 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Formulaire de Contact</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Formulaire de Soumission</title>
 </head>
 <body>
-    <div class="background">
-        <div class="form-container">
-            <h1>FONDATION UQAC</h1>
-            <form action="/SaveDataClient.html" method="post">
-                <input type="text" id="nom" name="nom" placeholder="Nom" required>
-                <input type="text" id="prenom" name="prenom" placeholder="Prénom" required>
-                <input type="email" id="email" name="email" placeholder="Adresse e-mail" required>
-                <button type="submit">Soumettre</button>
-            </form>
-        </div>
-    </div>
+    <h2>Entrez vos informations et choisissez l'action</h2>
+    <form method="POST">
+        <label for="action">File name:</label>
+        <input type="text" id="action" name="action" value="/submitForm"><br><br>
+
+        <label for="firstname">Prenom:</label>
+        <input type="text" id="firstname" name="firstname"><br><br>
+        
+        <label for="lastname">Nom:</label>
+        <input type="text" id="lastname" name="lastname"><br><br>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email"><br><br>
+        
+        <input type="submit" value="Soumettre" onclick="submitForm()">
+    </form>
+
+    <script>
+        function submitForm() {
+            var form = document.querySelector('form');
+            var action = document.getElementById('action').value;
+            form.action = action; // Définir l'action du formulaire basée sur l'entrée de l'utilisateur
+        }
+    </script>
 </body>
 </html>

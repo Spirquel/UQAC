@@ -1,52 +1,58 @@
-body, html {
+body {
     margin: 0;
     padding: 0;
-    height: 100%;
+    background: url('background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     font-family: Arial, sans-serif;
 }
 
-.background {
-    background-image: url('background.jpg'); /* Assure-toi que le chemin vers ton image de fond est correct */
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh; /* 100% de la hauteur de la fenêtre de visualisation */
-}
-
-.form-container {
-    background-color: white;
+.container {
+    background-color: rgba(255, 255, 255, 0.8);
     padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 300px;
-}
-
-form h1 {
-    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
     text-align: center;
 }
 
-input[type="text"], input[type="email"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+form {
+    display: flex;
+    flex-direction: column;
 }
 
-button {
-    width: 100%;
+h1 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+label {
+    margin-top: 10px;
+    color: #333;
+}
+
+input, select {
+    margin-bottom: 20px;
     padding: 10px;
-    background-color: #4CAF50; /* Couleur verte pour le bouton */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.submit-btn {
+    background-color: green;
     color: white;
+    padding: 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
 }
 
-button:hover {
-    background-color: #45a049;
+.submit-btn:hover {
+    background-color: darkgreen;
 }
