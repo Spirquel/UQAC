@@ -14,39 +14,39 @@ def Host_and_Path(_url):
         print("'{}' isn't valid, without 'http' or 'https' your link isn't real".format(_url))
         return None, None, None
 
-    _host_link = _url.split('/')[0]
-    _path = '/' + '/'.join(_url.split('/')[1:])
+    _host_link = _url.split('/')[0] #extract the host from the URL
+    _path = '/' + '/'.join(_url.split('/')[1:]) #extract the path from the URL
 
     return _host_link, _path, _port
 
 def Create_TCP_Connection(_host_link, _port):
-    raw_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    raw_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #create a raw socket
     if _port == 443:
-        context = ssl.create_default_context()
-        SocketClient_ = context.wrap_socket(raw_socket, server_hostname=_host_link)
+        context = ssl.create_default_context() #create SSL context for HTTPS
+        SocketClient_ = context.wrap_socket(raw_socket, server_hostname=_host_link) #wrap the socket with SSL
     else:
         SocketClient_ = raw_socket
-    SocketClient_.connect((_host_link, _port))
+    SocketClient_.connect((_host_link, _port)) #connect to the server
     return SocketClient_
 
 def Send_HTTP_Request(_sock, _method, _host, _path, _headers, _data):
-    header_lines = "\r\n".join(f"{key}: {value}" for key, value in _headers.items())
+    header_lines = "\r\n".join(f"{key}: {value}" for key, value in _headers.items()) #format headers
     if _data:
         body = urllib.parse.urlencode(_data)
-        request = f"{_method} {_path} HTTP/1.1\r\nHost: {_host}\r\n{header_lines}\r\nContent-Length: {len(body)}\r\n\r\n{body}"
-    else:
-        request = f"{_method} {_path} HTTP/1.1\r\nHost: {_host}\r\n{header_lines}\r\n\r\n"
+        request = f"{_method} {_path} HTTP/1.1\r\nHost: {_host}\r\n{header_lines}\r\nContent-Length: {len(body)}\r\n\r\n{body}" #create request with body
+    else: 
+        request = f"{_method} {_path} HTTP/1.1\r\nHost: {_host}\r\n{header_lines}\r\n\r\n" #create request without body
     _sock.sendall(request.encode('utf-8'))
 
 def Receive_Response(_sock, _host):
-    response = b""
+    response = b"" #initialize empty response
     while True:
         part = _sock.recv(4096)
         if not part:
             break
         response += part
     
-    if _host == "www.google.com":
+    if _host == "www.google.com": #for read google link
         try:
             print("Full response:\n", response.decode('utf-8'))
         except UnicodeDecodeError:
@@ -57,12 +57,12 @@ def Receive_Response(_sock, _host):
 
 def Handle_Response(_response):
     headers, _, body = _response.partition('\r\n\r\n')
-    status_line = headers.split('\r\n')[0]
+    status_line = headers.split('\r\n')[0] #get the status line
     parts = status_line.split(' ', 2)
     if len(parts) < 3:
         raise ValueError("Invalid status line: {}".format(status_line))
     version, status_code, reason = parts
-    status_code = int(status_code)
+    status_code = int(status_code) #convert status code to integer
     return status_code, headers, body
 
 def main(URL_, METHOD_):
@@ -74,7 +74,7 @@ def main(URL_, METHOD_):
         firstname = input("Enter Firstname: ")
         lastname = input("Enter Lastname: ")
         email = input("Enter Email: ")
-        DATA_ = {"firstname": firstname, "lastname": lastname, "email": email}
+        DATA_ = {"firstname": firstname, "lastname": lastname, "email": email} #data send
     else:
         DATA_ = None
 

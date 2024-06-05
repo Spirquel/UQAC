@@ -59,7 +59,7 @@ class Server
       System.out.println("Request from Client: " + MsgClientRequest_);
 
       String[] PartsOfClientRequest = MsgClientRequest_.split(" ");
-      String Method = PartsOfClientRequest[0]; //GET or POST
+      String Method = PartsOfClientRequest[0]; //GET or POST or PUT or DELETE 
       String Uri = PartsOfClientRequest[1]; //ex : index.html
       System.out.println("Method from Client: " + Method + "\nURI from Client: " + Uri);
         
@@ -86,7 +86,7 @@ class Server
     }
     catch (IOException e) 
     {
-      System.out.println("Error client: " + e.getMessage());
+      System.out.println("Error client: " + e.getMessage()); //handle client error
     }
     finally 
     {
@@ -99,21 +99,21 @@ class Server
       } 
       catch (IOException e) 
       {
-        System.out.println("Error closing client socket: " + e.getMessage());
+        System.out.println("Error closing client socket: " + e.getMessage()); //handle error while closing socket
       }
     }
   }
 
   private Map<String, String> parseFormData(String data) 
   {
-    Map<String, String> params = new HashMap<>();
+    Map<String, String> params = new HashMap<>(); //Map to store form data
     String[] pairs = data.split("&");
     for (String pair : pairs) 
     {
       String[] keyValue = pair.split("=");
       if (keyValue.length > 1) 
       {
-          params.put(keyValue[0], URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8));
+          params.put(keyValue[0], URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8)); //decode and store key-value pair
       }
     }
     return params;
@@ -169,20 +169,20 @@ class Server
 
     if(HTML_FILE.exists() && !HTML_FILE.isDirectory()) 
     {
-      MsgServer_ = "HTTP/1.1 200 OK\r\n\r\n" + _Uri + " Create";
+      MsgServer_ = "HTTP/1.1 200 OK\r\n\r\n" + _Uri + " Create"; //response for successful update
       outToClient_.writeBytes(MsgServer_);
       FileInputStream fis = new FileInputStream(HTML_FILE);
       byte[] buffer = new byte[4096];
       int bytesRead;
       while ((bytesRead = fis.read(buffer)) != -1) 
       {
-        outToClient_.write(buffer, 0, bytesRead);
+        outToClient_.write(buffer, 0, bytesRead); //send updated file to client
       }
       fis.close();
     } 
     else 
     {
-      MsgServer_ = "HTTP/1.1 401 Unauthorized\r\n\r\n" + _Uri + " Not Found";
+      MsgServer_ = "HTTP/1.1 401 Unauthorized\r\n\r\n" + _Uri + " Not Found"; //response for unauthorized access
     }
 
     outToClient_.writeBytes(MsgServer_);
@@ -205,7 +205,7 @@ class Server
 
     try (FileWriter HTMLWriter = new FileWriter(HTML_FILE, false)) 
     {
-      HTMLWriter.write("<html><body>");
+      HTMLWriter.write("<html><body>"); //for what save data
       HTMLWriter.write("Nom: " + params.get("lastname") + "<br>");
       HTMLWriter.write("Prenom: " + params.get("firstname") + "<br>");
       HTMLWriter.write("Email: " + params.get("email") + "<br>");
@@ -215,7 +215,7 @@ class Server
 
     if(HTML_FILE.exists()) 
     {
-      MsgServer_ = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + HTML_FILE.length() + "\r\n\r\n" + _Uri + " Updated" + "\r\n\r\n";
+      MsgServer_ = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + HTML_FILE.length() + "\r\n\r\n" + _Uri + " Updated" + "\r\n\r\n"; //response headers
       outToClient_.writeBytes(MsgServer_);
       FileInputStream fis = new FileInputStream(HTML_FILE);
       byte[] buffer = new byte[4096];
@@ -245,13 +245,13 @@ class Server
     if (HTML_FILE.exists() && !HTML_FILE.isDirectory()) 
     {
       HTML_FILE.delete();
-      String MsgServer_ = "HTTP/1.1 200 OK\r\n\r\n" + _Uri + " Deleted";
+      String MsgServer_ = "HTTP/1.1 200 OK\r\n\r\n" + _Uri + " Deleted"; //response for successful deletion
       outToClient_.writeBytes(MsgServer_);
       outToClient_.flush();
     } 
     else 
     {
-      String MsgServer_ = "HTTP/1.1 404 Not Found\r\n\r" + _Uri + " Not Found";
+      String MsgServer_ = "HTTP/1.1 404 Not Found\r\n\r" + _Uri + " Not Found"; //response for file not found
       outToClient_.writeBytes(MsgServer_);
       outToClient_.flush();
     }
