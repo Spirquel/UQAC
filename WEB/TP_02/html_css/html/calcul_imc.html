@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Calcul IMC</title>
+<link rel="stylesheet" href="../css/calcul_imc_styles.css">
+</head>
+<body>
+<header>
+    <h1>Calcule ton IMC</h1>
+</header>
+<main>
+    <form action="/submit-imc" method="post">
+        <div class="input-group">
+            <label for="weight">Poids (en kg):</label>
+            <input type="number" id="weight" name="weight" required>
+        </div>
+        
+        <div class="input-group">
+            <label for="height">Taille (en cm):</label>
+            <input type="number" id="height" name="height" required>
+        </div>
+        
+        <div class="input-group">
+            <label for="first-name">Prénom:</label>
+            <input type="text" id="first-name" name="first-name" required>
+        </div>
+        
+        <div class="input-group">
+            <label for="last-name">Nom:</label>
+            <input type="text" id="last-name" name="last-name" required>
+        </div>
+        
+        <button type="button" class="button" onclick="window.location.href='result_imc.html';">RESULTAT IMC</button>
+    </form>
+</main>
+<footer>
+    <p>Calculateur d'IMC</p>
+</footer>
+</body>
+</html>

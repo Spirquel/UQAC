@@ -1,0 +1,50 @@
+/* Styles spécifiques pour la page de calcul de l'IMC */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    text-align: center; /* Centre tout le contenu */
+}
+
+header, footer {
+    background: #007BFF;
+    color: white;
+    padding: 10px 20px;
+}
+
+h1 {
+    margin-bottom: 0;
+}
+
+.input-group {
+    margin-bottom: 10px; /* Espace entre les groupes */
+}
+
+.input-group label, .input-group input {
+    display: block; /* Assure que chaque label et input est à la ligne */
+    text-align: left; /* Alignement à gauche pour les labels et inputs dans le formulaire */
+    width: 90%; /* Largeur ajustée pour le formulaire */
+    margin: 5px auto; /* Centrage et espace vertical pour chaque élément du formulaire */
+}
+
+.button {
+    background-color: #4CAF50; /* Vert */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    display: block; /* Assure que le bouton s'étend sur toute la largeur du conteneur */
+    width: 100%;
+    margin-top: 20px; /* Espace avant le bouton */
+}
+
+footer {
+    padding: 10px;
+    background: #007BFF;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

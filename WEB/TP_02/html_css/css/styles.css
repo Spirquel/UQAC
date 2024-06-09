@@ -1,0 +1,65 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    text-align: center; /* Centre tout le contenu */
+}
+
+header, footer {
+    background: #007BFF;
+    color: white;
+    padding: 10px 20px;
+}
+
+h1 {
+    margin-bottom: 0;
+}
+
+h2, p {
+    margin-top: 5px;
+}
+
+.button {
+    background-color: #4CAF50; /* Vert */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 20px 0; /* Espace au-dessus et en dessous */
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.responsive-image {
+    width: 100%; /* s'adapte à la largeur de l'écran */
+    max-width: 1122px; /* largeur maximale */
+    height: auto; /* garde les proportions */
+    display: block;
+    margin: 0 auto; /* centre l'image horizontalement */
+}
+
+.central-text {
+    margin: 20px 0;
+}
+
+.results {
+    width: 90%;
+    margin: 20px auto; /* centre la section horizontalement */
+}
+
+.results h3 {
+    text-align: center;
+}
+
+footer {
+    padding: 10px;
+    background: #007BFF;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
