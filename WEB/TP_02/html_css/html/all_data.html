@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>All Data</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        .button {
+            display: block;
+            width: 200px;
+            padding: 10px;
+            margin: 20px auto;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            font-size: 20px;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Liste de toutes les IMC</h1>
+</header>
+<main>
+    <a href="/" class="button">Accueil</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>IMC</th>
+                <th>Classe</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                <td>{{ row.prenom }}</td>
+                <td>{{ row.nom }}</td>
+                <td>{{ row.imc }}</td>
+                <td>{{ row.classe }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</main>
+<footer>
+    <p>Application développée pour le calcul de l'IMC</p>
+</footer>
+</body>
+</html>
